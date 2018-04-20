@@ -1,11 +1,18 @@
 <template>
   <div id="app">
-    <header-comp></header-comp>
+    <header-comp :seller="seller"></header-comp>
     <div class="tab">
-      <div class="tab-item">商品</div>
-      <div class="tab-item">评论</div>
-      <div class="tab-item">商家</div>
+      <div class="tab-item">
+        <router-link :to="{path: 'goods'}">商品</router-link>
+      </div>
+      <div class="tab-item">
+        <router-link :to="{path: 'comments'}">评论</router-link>
+      </div>
+      <div class="tab-item">
+        <router-link :to="{path: 'shops'}">商家</router-link>
+      </div>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -19,21 +26,48 @@ export default {
   },
   data () {
     return {
-
+      seller: {}
     }
+  },
+  methods: {
+    getData () {
+      this.$axios({
+        method: 'get',
+        url: 'http://localhost:8080/static/data.json'
+      })
+        .then(rs => {
+          this.seller = rs.data.seller
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
+  },
+  created () {
+    this.getData()
   }
 }
 </script>
 
 <style lang="scss">
+  @import "common/style/index";
   #app {
     .tab {
       display: flex;
-      height: 40px;
-      line-height: 40px;
+      @include border-1px(rgba(7,17,27,0.1));
       .tab-item {
         text-align: center;
         flex: 1;
+        height: 40px;
+        line-height: 40px;
+        a {
+          display: block;
+          font-size: 14px;
+          color: rgb(77,85,93);
+          &.active {
+            color: rgb(255,20,20);
+          }
+        }
       }
     }
   }

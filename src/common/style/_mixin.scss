@@ -1,0 +1,19 @@
+//1像素函数
+@mixin border-1px ($color) {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    border-top: 1px solid $color;
+    width: 100%;
+  }
+}
+@mixin bg-image($url) {
+  background-image: url('img/' + $url + '@2x.png');
+  @media (-webkit-device-pixel-ratio: 3), (device-pixel-ratio: 3) {
+    background-image: url('img/' + $url + '@3x.png');
+  }
+}
