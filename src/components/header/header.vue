@@ -24,7 +24,7 @@
         <i class="icon-keyboard_arrow_right"></i>
       </div>
     </div>
-    <div class="bulletin-wrapper">
+    <div class="bulletin-wrapper" @click="showDetail">
       <span class="bulletin-title"></span>
       <span class="bulletin-text">{{seller.bulletin}}</span>
       <i class="icon-keyboard_arrow_right"></i>
@@ -32,47 +32,62 @@
     <div class="background">
       <img :src="seller.avatar" width="100%" height="100%"/>
     </div>
-    <!--  <transition name="fade">
-        <div v-if="detailShow" class="detail">
-          <div class="detail-wrapper clearfix">
-            <div class="detail-main">
-              <h1 class="name">{{seller.name}}</h1>
-              <div class="star-wrapper">
-                <star :size="48" :score="seller.score"></star>
-              </div>
-              <div class="title">
-                <div class="line"> </div>
-                <div class="text">优惠信息</div>
-                <div class="line"></div>
-              </div>
-              <ul v-if="seller.supports" class="supports">
-                <li class="support-item" v-for="item in seller.supports">
-                  <span class="icon" :class="iconClassMap[item.type]"></span>
-                  <span class="text">{{item.description}}</span>
-                </li>
-              </ul>
-              <div class="title">
-                <div class="line"> </div>
-                <div class="text">商家公告</div>
-                <div class="line"></div>
-              </div>
-              <div class="bulletin">{{seller.bulletin}}</div>
+      <div v-if="detailShow" class="detail">
+        <div class="detail-wrapper clearfix">
+          <div class="detail-main">
+            <h1 class="name">{{seller.name}}</h1>
+            <div class="star-wrapper">
+              <star-comp :size="48" :score="seller.score"></star-comp>
             </div>
-          </div>
-          <div class="detail-close">
-            <i class="icon-close" @click="hideDetail()"></i>
+            <div class="title">
+              <div class="line"> </div>
+              <div class="text">优惠信息</div>
+              <div class="line"></div>
+            </div>
+            <ul v-if="seller.supports" class="supports">
+              <li class="support-item" v-for="(item, index) in seller.supports" :key="index">
+                <span class="icon" :class="iconClassMap[item.type]"></span>
+                <span class="text">{{item.description}}</span>
+              </li>
+            </ul>
+            <div class="title">
+              <div class="line"> </div>
+              <!--<div class="text">商家公告</div>-->
+              <div class="line"></div>
+            </div>
+            <div class="bulletin">{{seller.bulletin}}</div>
           </div>
         </div>
-      </transition>-->
+        <div class="detail-close">
+          <i class="icon-close" @click="hideDetail"></i>
+        </div>
+      </div>
   </div>
 </template>
 
 <script>
+import starComp from '../star/star'
 export default {
   name: 'v-header',
   props: {
     seller: {
       type: Object
+    }
+  },
+  data () {
+    return {
+      detailShow: false
+    }
+  },
+  components: {
+    starComp
+  },
+  methods: {
+    showDetail () {
+      this.detailShow = true
+    },
+    hideDetail () {
+      this.detailShow = false
     }
   },
   created () {
@@ -217,6 +232,109 @@ export default {
       height: 100%;
       filter: blur(10px);
       z-index: -1;
+    }
+    .detail {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      width: 100%;
+      height: 100%;
+      background: rgba(7,17,27,0.8);
+      backdrop-filter: blur(10px);
+      overflow: auto;
+      .detail-wrapper {
+        min-height: 100%;
+        width: 100%;
+        .detail-main {
+          margin-top: 64px;
+          padding-bottom: 64px;
+          .name {
+            font-size: 16px;
+            font-weight: 700;
+            width: 100%;
+            color: rgb(255,255,255);
+            line-height: 16px;
+            text-align: center;
+          }
+          .star-wrapper {
+            margin: 16px 11px 28px 0;
+            text-align: center;
+          }
+          .title {
+            display: flex;
+            width: 80%;
+            margin: 0 auto 24px auto;
+            .line {
+              display: inline-block;
+              flex: 1;
+              height: 1px;
+              background: rgba(255,255,255,0.2);
+              margin: auto;
+            }
+            .text {
+              padding: 0 12px;
+              font-size: 14px;
+              font-weight: 700;
+            }
+          }
+          .supports {
+            padding: 0 0 28px 36px;
+            .support-item {
+              color: white;
+              padding: 0 6px 12px 16px;
+              .text {
+                vertical-align: top;
+                font-size: 12px;
+                font-weight: 200;
+                color: rgb(255,255,255);
+                line-height: 16px;
+                display: inline-block;
+              }
+              .icon {
+                display: inline-block;
+                vertical-align: top;
+                width: 16px;
+                height: 16px;
+                margin-right: 6px;
+                background-size: 100% 100%;
+                background-repeat: no-repeat;
+                &.decrease {
+                  @include bg-image('decrease_2')
+                }
+                &.discount {
+                  @include bg-image('discount_2')
+                }
+                &.guarantee {
+                  @include bg-image('guarantee_2')
+                }
+                &.invoice {
+                @include bg-image('invoice_2')
+                }
+                &.special {
+                @include bg-image('special_2')
+                }
+              }
+            }
+          }
+          .bulletin {
+            padding: 0 48px;
+            font-size: 12px;
+            font-weight: 200;
+            color: rgb(255,255,255);
+            line-height: 24px;
+          }
+        }
+      }
+      .detail-close {
+        position: relative;
+        margin: -64px auto 0 auto;
+        width: 32px;
+        height: 32px;
+        font-size: 32px;
+        clear: both;
+        color: rgb(255,255,255);
+      }
     }
   }
 </style>
