@@ -1,6 +1,6 @@
-# eleme-yang
+# eleme-yang（vue2.0+axios+vue-router）
 
-> A Vue.js project
+> 仿写饿了么订单页
 
 ## Build Setup
 
