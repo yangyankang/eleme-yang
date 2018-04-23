@@ -11,6 +11,11 @@
     width: 100%;
   }
 }
+@mixin border-none () {
+  &:after {
+    display: none;
+  }
+}
 @mixin bg-image($url) {
   background-image: url('img/' + $url + '@2x.png');
   @media (-webkit-device-pixel-ratio: 3), (device-pixel-ratio: 3) {
