@@ -2,7 +2,7 @@
   <div class="goods">
     <div class="menu-wrapper" ref="menuWrapper">
       <ul>
-        <li v-for="(item,index) in goods"  :key="index" :class="index==menuCurrentIndex?'menu-item-selected menu-item':'menu-item'">
+        <li v-for="(item,index) in goods"  :key="index" :class="index==menuCurrentIndex?'menu-item-selected menu-item':'menu-item'" @click="menuClick(index, $event)">
           <span class="text">
             <iconMap v-show="item.type>0" :iconType="item.type"></iconMap>
             {{item.name}}
@@ -77,18 +77,18 @@ export default {
   },
   methods: {
     _initScroll () {
-      this.menuWrapper = new BScroll(this.$refs.menuWrapper, {})
+      this.menuWrapper = new BScroll(this.$refs.menuWrapper, {
+        click: true
+      })
       this.foodsWrapper = new BScroll(this.$refs.foodsWrapper, {
         probeType: 3
       })
       this.foodsWrapper.on('scroll', (pos) => {
         this.scrollY = Math.abs(Math.round(pos.y))
-        console.log(this.scrollY)
       })
     },
     _caculateHeight () {
       let foodList = this.$refs.foodsWrapper.querySelectorAll('.food-list-hook')
-      console.log(foodList)
       let height = 0
       this.heightList.push(height)
       for (let i = 0; i < foodList.length; i++) {
@@ -96,6 +96,12 @@ export default {
         height += foodItem.clientHeight
         this.heightList.push(height)
       }
+    },
+    menuClick (index, event) { // 点击菜单滚动索引所对应的高度数组
+      if (!event._constructed) { // 移动端特有
+        return false
+      }
+      this.foodsWrapper.scrollTo(0, -this.heightList[index], 300)
     }
   },
   created () {
