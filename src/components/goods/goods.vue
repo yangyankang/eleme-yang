@@ -105,7 +105,7 @@ export default {
     })
       .then(rs => {
         this.goods = rs.data.goods
-        this.$nextTick(() => {
+        this.$nextTick(() => { // dom加载完成并且数据渲染完成后执行
           this._initScroll()
           this._caculateHeight()
         })
