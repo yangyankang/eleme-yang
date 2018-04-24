@@ -87,7 +87,7 @@ export default {
       })
     },
     _caculateHeight () {
-      let foodList = this.$refs.menuWrapper.getElementsByClassName('food-list-hook')
+      let foodList = this.$refs.foodsWrapper.querySelectorAll('.food-list-hook')
       console.log(foodList)
       let height = 0
       this.heightList.push(height)
