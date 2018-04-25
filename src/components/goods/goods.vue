@@ -31,7 +31,7 @@
                   <span v-show="food.oldPrice" class="oldPrice">￥{{food.oldPrice}}</span>
                 </div>
                 <div class="cartcontrol-wrapper">
-                  <!--<cartcontrol :food="food"></cartcontrol>-->
+                  <cart-control :food="food"></cart-control>
                 </div>
               </div>
             </li>
@@ -39,12 +39,13 @@
         </li>
       </ul>
     </div>
-    <shopeCar :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></shopeCar>
+    <shopeCar :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice" :selectFoods="selectedFoods"></shopeCar>
   </div>
 </template>
 <script>
 import iconMap from '../iconMap/iconMap'
 import shopeCar from '../shopCar/shopeCar'
+import CartControl from '../cartcontrol/cartcontrol'
 import BScroll from 'better-scroll'
 export default {
   name: 'goods',
@@ -61,10 +62,12 @@ export default {
     }
   },
   components: {
-    iconMap, shopeCar
+    iconMap,
+    shopeCar,
+    CartControl
   },
   computed: {
-    menuCurrentIndex () {
+    menuCurrentIndex () { // 左边菜单栏当前索引
       for (let i = 0; i < this.heightList.length; i++) {
         let curDomHeight = this.heightList[i]
         let nextDomHeight = this.heightList[i + 1]
@@ -73,21 +76,33 @@ export default {
         }
       }
       return 0
+    },
+    selectedFoods () { // 选中的food项
+      let foods = []
+      for (let good of this.goods) {
+        for (let food of good.foods) {
+          if (food.count) { // 如果存在count就放到foods数组中
+            foods.push(food)
+          }
+        }
+      }
+      return foods
     }
   },
   methods: {
-    _initScroll () {
+    _initScroll () { // 初始化滚动
       this.menuWrapper = new BScroll(this.$refs.menuWrapper, {
         click: true
       })
       this.foodsWrapper = new BScroll(this.$refs.foodsWrapper, {
-        probeType: 3
+        probeType: 3,
+        click: true
       })
       this.foodsWrapper.on('scroll', (pos) => {
         this.scrollY = Math.abs(Math.round(pos.y))
       })
     },
-    _caculateHeight () {
+    _caculateHeight () { // 计算高度
       let foodList = this.$refs.foodsWrapper.querySelectorAll('.food-list-hook')
       let height = 0
       this.heightList.push(height)
@@ -102,7 +117,8 @@ export default {
         return false
       }
       this.foodsWrapper.scrollTo(0, -this.heightList[index], 300)
-    }
+    },
+    goDetail () {}
   },
   created () {
     this.$axios({

@@ -3,20 +3,22 @@
     <div class="content">
       <div class="content-left">
         <div class="logo-wrapper">
-          <div class="badge" >
+          <div class="badge" v-show="totalCount > 0">
+            {{totalCount}}
           </div>
-          <div class="logo" >
+          <div class="logo" :class="totalCount > 0 ? 'active' : ''">
             <i class="icon-shopping_cart"></i>
           </div>
         </div>
-        <div class="price">
-          ￥10
+        <div class="price" :class="totalCount > 0 ? 'active' : ''">
+          ￥{{totalPrice}}
         </div>
         <div class="desc">
-          另需要配送费￥10元
+          另需要配送费￥{{deliveryPrice}}元
         </div>
       </div>
-      <div class="content-right">
+      <div class="content-right" :class="{enough: totalPrice >= minPrice}">
+        {{payDes}}
       </div>
     </div>
     <div class="ball-container">
@@ -86,6 +88,34 @@ export default {
       }],
       dropBalls: [],
       listShow: false
+    }
+  },
+  computed: {
+    totalPrice () { // 总价格
+      let total = 0
+      for (let food of this.selectFoods) {
+        total += food.price * food.count
+      }
+      return total
+    },
+    totalCount () { // 总数量
+      let count = 0
+      for (let food of this.selectFoods) {
+        count += food.count
+      }
+      return count
+    },
+    payDes () { // 结算部分
+      let des = ''
+      if (this.totalPrice === 0) {
+        des = `￥${this.totalPrice}起送`
+      } else if (this.totalPrice < this.minPrice) {
+        let diff = this.minPrice - this.totalPrice
+        des = `还差￥${diff}元起送`
+      } else {
+        des = `去结算`
+      }
+      return des
     }
   }
 }
@@ -183,6 +213,10 @@ export default {
         color: rgba(255,255,255,0.4);
         line-height: 48px;
         text-align: center;
+        &.enough {
+          background: #00b43c;
+          color: white;
+        }
       }
     }
     .ball-container {
