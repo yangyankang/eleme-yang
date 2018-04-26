@@ -20,7 +20,8 @@
 
 <script>
 import headerComp from './components/header/header'
-
+import Vue from 'vue'
+window.eventHub = new Vue()
 export default {
   name: 'App',
   components: {

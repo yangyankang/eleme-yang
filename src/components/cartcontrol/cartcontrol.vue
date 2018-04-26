@@ -31,6 +31,7 @@ export default {
         this.$set(this.food, 'count', 0)
       }
       this.food.count++
+      this.$root.eventHub.$emit('cart.add', event.target)
     },
     decreaseCount (event) { // 减少
       if (!event._constructed || !this.food.count) {

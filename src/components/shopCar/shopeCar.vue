@@ -21,13 +21,13 @@
         {{payDes}}
       </div>
     </div>
-    <div class="ball-container">
-        <transition name="drop"><!--v-on:before-enter="beforeEnter" v-on:enter="enter" v-on:after-enter="afterEnter" v-for="(ball,index) in balls" :key="index"-->
+    <!--<div class="ball-container">
+        <transition name="drop" v-on:before-enter="beforeEnter">&lt;!&ndash; v-on:enter="enter" v-on:after-enter="afterEnter" v-for="(ball,index) in balls" :key="index"&ndash;&gt;
         <div class="ball">
           <div class="inner inner-hook"></div>
         </div>
       </transition>
-    </div>
+    </div>-->
     <transition name="transHeight">
       <div class="shopcart-list" style="display:none;">
         <div class="list-header">
@@ -113,10 +113,39 @@ export default {
         let diff = this.minPrice - this.totalPrice
         des = `还差￥${diff}元起送`
       } else {
-        des = `去结算`
+        des = '去结算'
       }
       return des
     }
+  },
+  methods: {
+    drop (el) {
+      for (let i = 0, len = this.balls.length; i < len; i++) {
+        let ball = this.balls[i]
+        if (!ball.show) {
+          ball.show = true
+          ball.el = el
+          this.dropBalls.push(ball)
+          console.log(this.dropBalls)
+          return
+        }
+      }
+    }
+    // beforeEnter (el) {
+    //   let count = this.balls.length
+    //   while (count--) {
+    //     let ball = this.balls[count]
+    //     if (ball.show) {
+    //       let rect = ball.el.getBoundingClientRect()
+    //       let x = rect.left - 32 // x轴移动的距离
+    //       let y = -(window.innerHeight - rect.top - 22) // y轴移动的距离
+    //       el.style.display = ''
+    //     }
+    //   }
+    // }
+  },
+  created () {
+    this.$root.eventHub.$on('cart.add', this.drop) // 接收target
   }
 }
 </script>
