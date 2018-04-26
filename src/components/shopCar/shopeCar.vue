@@ -1,7 +1,7 @@
 <template>
   <div class="shopCart">
     <div class="content">
-      <div class="content-left">
+      <div class="content-left" @click.stop.prevent="listShowToggle">
         <div class="logo-wrapper">
           <div class="badge" v-show="totalCount > 0">
             {{totalCount}}
@@ -29,20 +29,20 @@
       </transition>
     </div>-->
     <transition name="transHeight">
-      <div class="shopcart-list" style="display:none;">
+      <div class="shopcart-list" v-show="listShow">
         <div class="list-header">
           <h1 class="title">购物车</h1>
-          <span class="empty">清空</span>
+          <span class="empty" @click="empty">清空</span>
         </div>
-        <div class="list-content">
+        <div class="list-content" ref="foodList">
           <ul>
-            <li class="food">
-              <span class="name"></span>
+            <li class="food" v-for="(food, index) in selectFoods" :key="index">
+              <span class="name">{{food.name}}</span>
               <div class="price">
-                <span></span>
+                <span>￥{{food.price * food.count}}</span>
               </div>
               <div class="cartcontrol-wrapper">
-                <!--<cartcontrol :food="food"></cartcontrol>-->
+                <CarControl :food="food"></CarControl>
               </div>
             </li>
           </ul>
@@ -50,12 +50,14 @@
       </div>
     </transition>
     <transition name="fade-backdrop">
-      <div class="backdrop" style="display:none;"></div>
+      <div class="backdrop" v-show="showBackDrop" @click="hideBackDrop"></div>
     </transition>
   </div>
 </template>
 
 <script>
+import CarControl from '../cartcontrol/cartcontrol'
+import BetterScroll from 'better-scroll'
 export default {
   name: 'shopeCar',
   props: {
@@ -90,7 +92,18 @@ export default {
       listShow: false
     }
   },
+  components: {
+    CarControl
+  },
   computed: {
+    showBackDrop () {
+      if (this.totalPrice > 0 && this.listShow) {
+        return true
+      }
+      // eslint-disable-next-line
+      this.listShow = false
+      return false
+    },
     totalPrice () { // 总价格
       let total = 0
       for (let food of this.selectFoods) {
@@ -130,6 +143,32 @@ export default {
           return
         }
       }
+    },
+    _initScroll () {
+      this.foodListScroll = new BetterScroll(this.$refs.foodList, {
+        click: true
+      })
+    },
+    listShowToggle () {
+      if (this.selectFoods.length > 0) {
+        this.listShow = !this.listShow
+        this.$nextTick(() => {
+          if (!this.foodListScroll) {
+            this._initScroll()
+          } else {
+            this.foodListScroll.refresh()
+          }
+        })
+      }
+    },
+    empty () {
+      this.selectFoods.forEach((food) => {
+        food.count = 0
+      })
+      this.listShow = false
+    },
+    hideBackDrop () {
+      this.listShow = false
     }
     // beforeEnter (el) {
     //   let count = this.balls.length
@@ -278,7 +317,7 @@ export default {
         transition: all 0.5s;
       }
       &.transHeight-enter,&.transHeight-leave-active {
-      transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
       }
       .list-header {
         height: 40px;
@@ -337,8 +376,8 @@ export default {
       left: 0;
       right: 0;
       background: rgba(7,17,27,0.6);
+      z-index: -2;
       backdrop-filter: blur(10px);
-      z-index: 40;
       &.fade-backdrop-enter-active,&.fade-backdrop-leave-active {
         transition: opacity 0.5s;
       }
