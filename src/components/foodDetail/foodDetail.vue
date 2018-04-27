@@ -18,31 +18,31 @@
           </div>
           <div class="shopCart">
             <transition name="fade">
-              <div class="text"  v-show="!food.count">加入购物车</div><!--@click="addCart($event)"-->
+              <div class="text"  v-show="!food.count" @click="addCart($event)">加入购物车</div>
             </transition>
           </div>
-          <cartcontrol :food="food"></cartcontrol>
+          <cartcontrol :food="food" v-show="food.count > 0"></cartcontrol>
         </div>
-        <!--      <div class="divider"></div>
-              <div class="desc">
-                <div class="title">商品介绍</div>
-                <div class="content">{{food.info}}</div>
-              </div>
-              <div class="divider"></div>
-              <div class="evaluation">
-                <div class="title">
-                  商品评价
-                </div>
-                <div class="classify">
-                    <span v-for="(item,index) in classifyArr" class="item" :class="{'active':item.active,'bad':index==2,'badActive':item.active&&index==2}" :key="index">&lt;!&ndash; @click="filterEvel(item)"&ndash;&gt;
-                      {{item.name}}<span class="count">{{item.count}}</span>
-                    </span>
-                </div>
-                <div class="switch">&lt;!&ndash;@click="evelflag=!evelflag"&ndash;&gt;
-                  <span class="icon-check_circle"></span>&lt;!&ndash; :class="{'on':evelflag}"&ndash;&gt;
-                  <span class="text">只看有内容的评价</span>
-                </div>
-                <div class="evel-list">
+        <Split></Split>
+        <div class="desc">
+          <div class="title">商品介绍</div>
+          <div class="content">{{food.info}}</div>
+        </div>
+        <Split></Split>
+        <div class="evaluation">
+          <div class="title">
+            商品评价
+          </div>
+          <div class="classify">
+            <span v-for="(item,index) in classifyArr" class="item" :class="{'active':item.active,'bad':index==2,'badActive':item.active&&index==2}" :key="index" @click="filterEvel(item)">
+              {{item.name}}<span class="count">{{item.count}}</span>
+            </span>
+          </div>
+          <div class="switch" @click="evelflag=!evelflag">
+              <span class="icon-check_circle" :class="{'on':evelflag}"></span>
+              <span class="text">只看有内容的评价</span>
+          </div>
+               <!-- <div class="evel-list">
                   <ul>
                     <li class="evel" v-for="(evel,index) in evelArr" :key="index">
                       <div class="userInfo">
@@ -58,8 +58,8 @@
                       </div>
                     </li>
                   </ul>
-                </div>
-              </div>-->
+                </div>-->
+          </div>
       </div>
     </div>
   </transition>
@@ -67,6 +67,7 @@
 
 <script>
 import cartcontrol from '../cartcontrol/cartcontrol'
+import Split from '../split/split'
 import BScroll from 'better-scroll'
 export default {
   name: 'foodDetail',
@@ -77,11 +78,26 @@ export default {
   },
   data () {
     return {
-      showDetail: false // 商品详情展示状态
+      showDetail: false, // 商品详情展示状态
+      classifyArr: [{
+        name: '全部',
+        count: this.food.ratings.length,
+        active: true
+      }, {
+        name: '推荐',
+        count: this.food.ratings.filter((data) => data.rateType === 0).length,
+        active: false
+      }, {
+        name: '吐槽',
+        count: this.food.ratings.filter((data) => data.rateType).length,
+        active: false
+      }],
+      evelflag: true
     }
   },
   components: {
-    cartcontrol
+    cartcontrol,
+    Split
   },
   methods: {
     showToggle () { // 展示详情切换
@@ -100,6 +116,18 @@ export default {
       } else { // 存在就重新刷新
         this.detailWrapper.refresh()
       }
+    },
+    addCart (event) {
+      if (!event._constructed) {
+        return
+      }
+      this.$set(this.food, 'count', 1)
+    },
+    filterEvel (item) {
+      this.classifyArr.forEach((classItem) => {
+        classItem.active = false
+      })
+      item.active = true
     }
   }
 }
@@ -173,7 +201,7 @@ export default {
         .shopCart {
           position: absolute;
           right: 18px;
-          bottom: 18px;
+            bottom: 18px;
           height: 24px;
           text-align: center;
           z-index: 2;
@@ -194,10 +222,78 @@ export default {
             }
           }
         }
-        .cartcontrol {
+        .cartconrol {
           position: absolute;
           right: 12px;
           bottom: 12px;
+        }
+      }
+      .desc {
+        padding: 18px;
+        .title {
+          font-size: 14px;
+          font-weight: 500;
+          color: #07111b;
+          margin-bottom: 6px;
+        }
+        .content {
+          font-size: 12px;
+          font-weight: 200;
+          color: rgb(77,85,93);
+          line-height: 24px;
+          padding: 0 8px;
+        }
+      }
+      .evaluation {
+        padding: 18px 0;
+        position: relative;
+        .title {
+          padding-left: 18px;
+          font-size: 14px;
+          font-weight: 500;
+          color: #07111b;
+        }
+        .classify {
+          padding: 18px 0;
+          margin: 0 18px;
+          border-bottom: 1px solid rgba(7,17,27,0.1);
+          .item {
+            display: inline-block;
+            font-size: 12px;
+            padding: 8px 12px;
+            line-height: 16px;
+            background: rgba(0,160,220,0.2);
+            color: rgb(77,85,95);
+            margin-right: 8px;
+            .count {
+              font-size: 8px;
+              padding-left: 2px;
+            }
+            &.active {
+              color: white;
+              background: rgb(0,169,220);
+            }
+            &.bad {
+              background: rgba(77,85,93,0.2);
+            }
+            &.badActive {
+              background: #4d555d;
+            }
+          }
+        }
+        .switch {
+          font-size: 12px;
+          width: 100%;
+          padding: 12px 0 12px 18px;
+          color: rgb(147,153,159);
+          border-bottom: 1px solid rgba(7,17,27,0.1);
+          .icon-check_circle {
+            font-size: 24px;
+            vertical-align: middle;
+            &.on {
+              color: #00c850;
+            }
+          }
         }
       }
     }

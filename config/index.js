@@ -12,15 +12,15 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       'api/**': {
-        target: '192.168.1.113:81', // 你接口的域名
+        target: '192.168.1.10:81', // 你接口的域名
         secure: false,
         changeOrigin: false,
       }
     },
 
     // Various Dev Server settings
-    host: '192.168.1.113', // can be overwritten by process.env.HOST
-    port: 80, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    host: '192.168.1.10', // can be overwritten by process.env.HOST(company:192.168.1.113,home:192.168.1.10)
+    port: 81, // can be overwritten by process.env.PORT, if portdetermined is in use, a free one will be
     autoOpenBrowser: false,
     errorOverlay: true,
     notifyOnErrors: true,

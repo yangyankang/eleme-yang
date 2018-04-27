@@ -133,7 +133,7 @@ export default {
   created () {
     this.$axios({
       method: 'get',
-      url: 'http://192.168.1.113:81/static/data.json'
+      url: 'http://192.168.1.10:81/static/data.json'
     })
       .then(rs => {
         this.goods = rs.data.goods
