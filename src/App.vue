@@ -36,7 +36,7 @@ export default {
     getData () {
       this.$axios({
         method: 'get',
-        url: 'http://localhost:8080/static/data.json'
+        url: 'http://192.168.1.113:81/static/data.json'
       })
         .then(rs => {
           this.seller = rs.data.seller

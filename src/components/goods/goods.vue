@@ -40,11 +40,13 @@
       </ul>
     </div>
     <shopeCar :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice" :selectFoods="selectedFoods"></shopeCar>
+    <FoodDetail :food="selectedFood" v-if="selectedFood" ref="foodDetail"></FoodDetail>
   </div>
 </template>
 <script>
 import iconMap from '../iconMap/iconMap'
 import shopeCar from '../shopCar/shopeCar'
+import FoodDetail from '../foodDetail/foodDetail'
 import CartControl from '../cartcontrol/cartcontrol'
 import BScroll from 'better-scroll'
 export default {
@@ -58,13 +60,15 @@ export default {
     return {
       goods: [],
       heightList: [],
-      scrollY: 0
+      scrollY: 0,
+      selectedFood: ''
     }
   },
   components: {
     iconMap,
     shopeCar,
-    CartControl
+    CartControl,
+    FoodDetail
   },
   computed: {
     menuCurrentIndex () { // 左边菜单栏当前索引
@@ -118,12 +122,18 @@ export default {
       }
       this.foodsWrapper.scrollTo(0, -this.heightList[index], 300)
     },
-    goDetail () {}
+    goDetail (food) { // 点击单个商品将food传入到商品详情页
+      this.selectedFood = food
+      console.log(food)
+      this.$nextTick(() => {
+        this.$refs.foodDetail.showToggle()
+      })
+    }
   },
   created () {
     this.$axios({
       method: 'get',
-      url: 'http://localhost:8080/static/data.json'
+      url: 'http://192.168.1.113:81/static/data.json'
     })
       .then(rs => {
         this.goods = rs.data.goods
